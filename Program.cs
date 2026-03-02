@@ -73,8 +73,14 @@ static async Task ProcessRepositoriesAsync(HttpClient client, string account)
             case "WatchEvent":
                 Console.WriteLine($"- starred a repository: {activity.Repo.Name}");
                 break;
+            case "ForkEvent":
+                Console.WriteLine($"- forked a repository: {activity.Repo.Name}");
+                break;
+            case "DiscussionEvent":
+                Console.WriteLine("- created a discussion");
+                break;
             default:
-                //activity.Type = $"Other Event: {activity.Type}";
+                activity.Type = $"Other Event: {activity.Type}";
                 break;
         }
     }
