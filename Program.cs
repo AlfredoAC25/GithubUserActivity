@@ -1,5 +1,7 @@
 ﻿using System.CommandLine;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using GithubUserActivity.POCO;
 
 using HttpClient client = new();
 client.DefaultRequestHeaders.Accept.Clear();
@@ -35,9 +37,45 @@ return rootCommand.Parse(args).Invoke();
 static async Task ProcessRepositoriesAsync(HttpClient client, string account)
 {
     Console.WriteLine($"Fetching activity for GitHub account: {account}");
+    List<GithubActivity> githubActivities = new List<GithubActivity>();
 
     var json = await client.GetStringAsync(
          $"https://api.github.com/users/{account}/events");
 
-    Console.WriteLine(json);
+    if(!string.IsNullOrEmpty(json))
+        githubActivities = JsonSerializer.Deserialize<List<GithubActivity>>(json) ?? new List<GithubActivity>();
+
+    foreach (var activity in githubActivities)
+    {
+        switch (activity.Type)
+        {
+            case "PushEvent":
+                Console.WriteLine($"- pushed commit to {activity.Repo.Name}");
+                break;
+            case "PullRequestEvent":
+                Console.WriteLine($"- {activity.Payload.Action} pull request in {activity.Repo.Name}");
+                break;
+            case "IssuesEvent":
+                Console.WriteLine($"- issue {activity.Payload.Action} in {activity.Repo.Name}");
+                break;
+            case "PullRequestReviewEvent":
+                Console.WriteLine($"- pull request review {activity.Payload.Action} in {activity.Repo.Name}");
+                break;
+            case "PullRequestReviewCommentEvent":
+                Console.WriteLine($"- pull request review comment {activity.Payload.Action} in {activity.Repo.Name}");
+                break;
+            case "CreateEvent":
+                Console.WriteLine($"- created repo {activity.Repo.Name}");
+                break;
+            case "DeleteEvent":
+                Console.WriteLine($"- deleted {activity.Repo.Name}");
+                break;
+            case "WatchEvent":
+                Console.WriteLine($"- starred a repository: {activity.Repo.Name}");
+                break;
+            default:
+                //activity.Type = $"Other Event: {activity.Type}";
+                break;
+        }
+    }
 }
