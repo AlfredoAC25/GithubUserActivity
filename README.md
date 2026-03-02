@@ -7,7 +7,7 @@ A simple C# command-line application that retrieves GitHub user activity using t
 - [Requirements](#Requirements)
 - [Installation](#Installation)
 - [Usage](#Usage)
-- [Project Roadmap](#Project Roadmap)
+- [Project Roadmap](#ProjectRoadmap)
 
 ## Features
 Events you can fetch from user
@@ -40,7 +40,7 @@ To fetch username activity
 dotnet run github-activity [username]
 ```
 
-## Project Roadmap
+## ProjectRoadmap
 This project is part of a set of practice projects from the C# roadmap.
 
 https://roadmap.sh/projects/github-user-activity
